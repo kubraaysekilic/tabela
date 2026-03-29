@@ -1,0 +1,904 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tabela Değerlendirme Formu</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+  :root {
+    --bg: #0f0f0f;
+    --surface: #1a1a1a;
+    --surface2: #222222;
+    --border: #2e2e2e;
+    --accent: #c8f165;
+    --accent2: #f16565;
+    --accent3: #65b4f1;
+    --text: #f0ede6;
+    --muted: #888;
+    --font-mono: 'Space Mono', monospace;
+    --font-body: 'DM Sans', sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    min-height: 100vh;
+    padding: 24px 16px 60px;
+  }
+
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 32px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 20px;
+  }
+
+  .header-left h1 {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--accent);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .header-left p {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 4px;
+    font-family: var(--font-mono);
+  }
+
+  .tabela-counter {
+    font-family: var(--font-mono);
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--accent);
+    line-height: 1;
+  }
+
+  .tabela-counter span {
+    display: block;
+    font-size: 10px;
+    color: var(--muted);
+    font-weight: 400;
+    text-align: right;
+    margin-top: 2px;
+  }
+
+  /* FORM CARD */
+  .form-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 16px;
+  }
+
+  .section-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  .field-group { margin-bottom: 20px; }
+
+  .field-label {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text);
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .field-label .dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    display: inline-block;
+  }
+
+  .field-hint {
+    font-size: 11px;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+
+  input[type="text"], input[type="number"], textarea {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 14px;
+    color: var(--text);
+    font-family: var(--font-mono);
+    font-size: 13px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  input[type="text"]:focus, input[type="number"]:focus, textarea:focus {
+    border-color: var(--accent);
+  }
+
+  input::placeholder, textarea::placeholder { color: var(--muted); }
+
+  textarea { resize: vertical; min-height: 80px; }
+
+  /* CHIP BUTTONS */
+  .chip-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .chip {
+    padding: 8px 14px;
+    border-radius: 100px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--muted);
+    font-family: var(--font-body);
+    font-size: 13px;
+    font-weight: 400;
+    cursor: pointer;
+    transition: all 0.15s;
+    user-select: none;
+  }
+
+  .chip:hover { border-color: var(--text); color: var(--text); }
+
+  .chip.selected-green { border-color: var(--accent); color: var(--accent); background: rgba(200,241,101,0.08); }
+  .chip.selected-red   { border-color: var(--accent2); color: var(--accent2); background: rgba(241,101,101,0.08); }
+  .chip.selected-blue  { border-color: var(--accent3); color: var(--accent3); background: rgba(101,180,241,0.08); }
+  .chip.selected-yellow { border-color: #f1c765; color: #f1c765; background: rgba(241,199,101,0.08); }
+
+  /* STAR RATING */
+  .star-row {
+    display: flex;
+    gap: 8px;
+  }
+
+  .star-btn {
+    width: 42px; height: 42px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--muted);
+    font-size: 18px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.15s;
+    font-family: var(--font-mono);
+    font-weight: 700;
+  }
+
+  .star-btn:hover { border-color: #f1c765; color: #f1c765; }
+  .star-btn.active { border-color: #f1c765; color: #f1c765; background: rgba(241,199,101,0.12); }
+
+  /* DIVIDER */
+  hr { border: none; border-top: 1px solid var(--border); margin: 8px 0 20px; }
+
+  /* SORUN BADGE */
+  .sorun-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    border-radius: 100px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    margin-top: 8px;
+    transition: all 0.3s;
+  }
+
+  .sorun-badge.iyi { background: rgba(200,241,101,0.12); color: var(--accent); border: 1px solid rgba(200,241,101,0.3); }
+  .sorun-badge.sorunlu { background: rgba(241,101,101,0.12); color: var(--accent2); border: 1px solid rgba(241,101,101,0.3); }
+  .sorun-badge.belirsiz { background: rgba(241,199,101,0.12); color: #f1c765; border: 1px solid rgba(241,199,101,0.3); }
+
+  /* BUTTONS */
+  .btn-row {
+    display: flex;
+    gap: 12px;
+    margin-top: 8px;
+  }
+
+  .btn {
+    flex: 1;
+    padding: 14px;
+    border-radius: 12px;
+    border: none;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .btn-save {
+    background: var(--accent);
+    color: #0f0f0f;
+  }
+
+  .btn-save:hover { background: #d4f57a; transform: translateY(-1px); }
+  .btn-save:active { transform: translateY(0); }
+
+  .btn-new {
+    background: transparent;
+    color: var(--text);
+    border: 1px solid var(--border);
+  }
+
+  .btn-new:hover { border-color: var(--text); }
+
+  /* SAVED LIST */
+  .saved-section {
+    margin-top: 32px;
+  }
+
+  .saved-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+
+  .saved-title {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+
+  .saved-count {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    background: var(--surface2);
+    color: var(--accent);
+    padding: 3px 10px;
+    border-radius: 100px;
+    border: 1px solid var(--border);
+  }
+
+  .saved-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 16px;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .saved-item-left { flex: 1; min-width: 0; }
+
+  .saved-no {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--muted);
+    margin-bottom: 2px;
+  }
+
+  .saved-loc {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .saved-meta {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+
+  .saved-status {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 100px;
+    white-space: nowrap;
+  }
+
+  .status-iyi { background: rgba(200,241,101,0.12); color: var(--accent); }
+  .status-sorunlu { background: rgba(241,101,101,0.12); color: var(--accent2); }
+  .status-belirsiz { background: rgba(241,199,101,0.12); color: #f1c765; }
+
+  .btn-download-item {
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--muted);
+    padding: 6px 10px;
+    font-size: 12px;
+    cursor: pointer;
+    font-family: var(--font-mono);
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+
+  .btn-download-item:hover { border-color: var(--accent3); color: var(--accent3); }
+
+  /* EXPORT CARD — hidden, used for screenshot */
+  .export-card {
+    position: fixed;
+    top: -9999px;
+    left: -9999px;
+    width: 480px;
+    background: #1a1a1a;
+    border: 1px solid #2e2e2e;
+    border-radius: 20px;
+    padding: 28px;
+    font-family: 'DM Sans', sans-serif;
+    color: #f0ede6;
+  }
+
+  .ec-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid #2e2e2e;
+    padding-bottom: 16px;
+    margin-bottom: 20px;
+  }
+
+  .ec-title {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: #c8f165;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .ec-no {
+    font-family: 'Space Mono', monospace;
+    font-size: 22px;
+    font-weight: 700;
+    color: #c8f165;
+  }
+
+  .ec-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+
+  .ec-field {}
+
+  .ec-key {
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    color: #666;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+
+  .ec-val {
+    font-size: 13px;
+    font-weight: 500;
+    color: #f0ede6;
+  }
+
+  .ec-full {
+    margin-bottom: 14px;
+  }
+
+  .ec-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 6px 14px;
+    border-radius: 100px;
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+  }
+
+  .ec-badge.iyi { background: rgba(200,241,101,0.15); color: #c8f165; border: 1px solid rgba(200,241,101,0.35); }
+  .ec-badge.sorunlu { background: rgba(241,101,101,0.15); color: #f16565; border: 1px solid rgba(241,101,101,0.35); }
+  .ec-badge.belirsiz { background: rgba(241,199,101,0.15); color: #f1c765; border: 1px solid rgba(241,199,101,0.35); }
+
+  .ec-footer {
+    margin-top: 18px;
+    padding-top: 14px;
+    border-top: 1px solid #2e2e2e;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .ec-footer-text {
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    color: #444;
+    letter-spacing: 0.08em;
+  }
+
+  .stars-display { color: #f1c765; font-size: 14px; letter-spacing: 2px; }
+
+  /* TOAST */
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(80px);
+    background: var(--accent);
+    color: #0f0f0f;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    padding: 12px 24px;
+    border-radius: 100px;
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    z-index: 9999;
+    white-space: nowrap;
+  }
+
+  .toast.show { transform: translateX(-50%) translateY(0); }
+
+  /* EMPTY STATE */
+  .empty-state {
+    text-align: center;
+    padding: 32px 16px;
+    color: var(--muted);
+    font-size: 13px;
+    border: 1px dashed var(--border);
+    border-radius: 12px;
+  }
+
+  .empty-state .icon { font-size: 28px; margin-bottom: 8px; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-left">
+    <h1>Tabela Değerlendirme</h1>
+    <p>GIS Saha Formu — BM461</p>
+  </div>
+  <div class="tabela-counter" id="counterDisplay">T01<span>aktif form</span></div>
+</div>
+
+<!-- ANA FORM KARTI -->
+<div class="form-card" id="mainForm">
+
+  <div class="section-label">Kimlik & Konum</div>
+
+  <div class="field-group">
+    <div class="field-label"><span class="dot"></span>Tabela Numarası</div>
+    <input type="text" id="f_no" placeholder="Örn: T01, T02..." oninput="updateCounter()">
+  </div>
+
+  <div class="field-group">
+    <div class="field-label"><span class="dot"></span>Konum Açıklaması</div>
+    <div class="field-hint">Nerede olduğunu kısa yaz</div>
+    <input type="text" id="f_konum" placeholder="Örn: Mühendislik Fakültesi ana kapısı sol taraf">
+  </div>
+
+  <div class="field-group">
+    <div class="field-label"><span class="dot"></span>GPS Koordinatı</div>
+    <div class="field-hint">Google Maps'te uzun bas → kopyala</div>
+    <input type="text" id="f_gps" placeholder="Örn: 37.8742, 32.4934">
+    <div style="margin-top: 8px;">
+      <button class="chip" onclick="getGPS()" style="font-size:12px;">📍 Konumumu Al</button>
+    </div>
+  </div>
+
+  <hr>
+  <div class="section-label">Tabela Özellikleri</div>
+
+  <div class="field-group">
+    <div class="field-label"><span class="dot"></span>Tabela Dili</div>
+    <div class="chip-group" id="g_dil">
+      <button class="chip" onclick="selectChip(this,'g_dil','blue')">Sadece Türkçe</button>
+      <button class="chip" onclick="selectChip(this,'g_dil','blue')">Sadece İngilizce</button>
+      <button class="chip" onclick="selectChip(this,'g_dil','blue')">İkisi birden</button>
+      <button class="chip" onclick="selectChip(this,'g_dil','blue')">Sadece ok/sembol</button>
+    </div>
+  </div>
+
+  <div class="field-group">
+    <div class="field-label"><span class="dot"></span>Tabela Tipi</div>
+    <div class="chip-group" id="g_tip">
+      <button class="chip" onclick="selectChip(this,'g_tip','blue')">Direk üstü levha</button>
+      <button class="chip" onclick="selectChip(this,'g_tip','blue')">Duvara monte</button>
+      <button class="chip" onclick="selectChip(this,'g_tip','blue')">Zemine gömülü</button>
+      <button class="chip" onclick="selectChip(this,'g_tip','blue')">Elektronik / LED</button>
+    </div>
+  </div>
+
+  <hr>
+  <div class="section-label">Değerlendirme</div>
+
+  <div class="field-group">
+    <div class="field-label"><span class="dot"></span>Okunabilirlik</div>
+    <div class="field-hint">1 = hiç okunamıyor &nbsp;·&nbsp; 5 = çok net</div>
+    <div class="star-row" id="g_oku">
+      <button class="star-btn" onclick="selectStar(1)">1</button>
+      <button class="star-btn" onclick="selectStar(2)">2</button>
+      <button class="star-btn" onclick="selectStar(3)">3</button>
+      <button class="star-btn" onclick="selectStar(4)">4</button>
+      <button class="star-btn" onclick="selectStar(5)">5</button>
+    </div>
+  </div>
+
+  <div class="field-group">
+    <div class="field-label"><span class="dot"></span>Bakım Durumu</div>
+    <div class="chip-group" id="g_bakim">
+      <button class="chip" onclick="selectChip(this,'g_bakim','green')">İyi</button>
+      <button class="chip" onclick="selectChip(this,'g_bakim','yellow')">Boyası solmuş</button>
+      <button class="chip" onclick="selectChip(this,'g_bakim','yellow')">Hasarlı / kırık</button>
+      <button class="chip" onclick="selectChip(this,'g_bakim','red')">Düşmüş / yok</button>
+    </div>
+  </div>
+
+  <div class="field-group">
+    <div class="field-label"><span class="dot"></span>Yön Doğruluğu</div>
+    <div class="field-hint">Oku takip edersen gerçekten o yere gidiyor musun?</div>
+    <div class="chip-group" id="g_yon">
+      <button class="chip" onclick="selectChip(this,'g_yon','green')">Evet, doğru</button>
+      <button class="chip" onclick="selectChip(this,'g_yon','red')">Hayır, yanlış</button>
+      <button class="chip" onclick="selectChip(this,'g_yon','yellow')">Emin olamadım</button>
+    </div>
+  </div>
+
+  <div class="field-group">
+    <div class="field-label"><span class="dot"></span>Görünürlük</div>
+    <div class="field-hint">Yürüyerek geçerken göze çarpıyor mu?</div>
+    <div class="chip-group" id="g_gorunurluk">
+      <button class="chip" onclick="selectChip(this,'g_gorunurluk','green')">Kolayca görünüyor</button>
+      <button class="chip" onclick="selectChip(this,'g_gorunurluk','yellow')">Zor fark ediliyor</button>
+      <button class="chip" onclick="selectChip(this,'g_gorunurluk','red')">Görmek çok zor</button>
+    </div>
+  </div>
+
+  <hr>
+  <div class="section-label">Fotoğraf & Notlar</div>
+
+  <div class="field-group">
+    <div class="field-label"><span class="dot"></span>Fotoğraf Dosya Adları</div>
+    <div class="field-hint">Çektiğin fotoğrafların adını yaz</div>
+    <input type="text" id="f_foto" placeholder="Örn: T01_uzak.jpg, T01_yakin.jpg">
+  </div>
+
+  <div class="field-group">
+    <div class="field-label"><span class="dot"></span>Ek Notlar</div>
+    <textarea id="f_not" placeholder="Örn: Ağaç dalları tabelayı kapatıyor, gece görünmüyor..."></textarea>
+  </div>
+
+  <div id="sorunBadge" style="margin-bottom:20px; display:none;"></div>
+
+  <div class="btn-row">
+    <button class="btn btn-save" onclick="saveTabela()">💾 Kaydet + İndir</button>
+    <button class="btn btn-new" onclick="newTabela()">＋ Yeni Tabela</button>
+  </div>
+
+</div>
+
+<!-- KAYITLI TABELALAR -->
+<div class="saved-section">
+  <div class="saved-header">
+    <div class="saved-title">Kaydedilen Tabelalar</div>
+    <div class="saved-count" id="savedCount">0 tabela</div>
+  </div>
+  <div id="savedList">
+    <div class="empty-state">
+      <div class="icon">📋</div>
+      Henüz kayıt yok.<br>Formu doldurup "Kaydet + İndir" butonuna bas.
+    </div>
+  </div>
+</div>
+
+<!-- EXPORT CARD (ekran görüntüsü için gizli) -->
+<div class="export-card" id="exportCard">
+  <div class="ec-header">
+    <div>
+      <div class="ec-title">CBS Saha Formu · BM461</div>
+      <div style="font-size:11px; color:#666; margin-top:4px; font-family:'Space Mono',monospace;" id="ec_tarih"></div>
+    </div>
+    <div class="ec-no" id="ec_no">T01</div>
+  </div>
+  <div class="ec-full">
+    <div class="ec-key">Konum</div>
+    <div class="ec-val" id="ec_konum">—</div>
+  </div>
+  <div class="ec-full">
+    <div class="ec-key">GPS Koordinatı</div>
+    <div class="ec-val" id="ec_gps" style="font-family:'Space Mono',monospace; font-size:12px;">—</div>
+  </div>
+  <div class="ec-grid">
+    <div class="ec-field">
+      <div class="ec-key">Dil</div>
+      <div class="ec-val" id="ec_dil">—</div>
+    </div>
+    <div class="ec-field">
+      <div class="ec-key">Tip</div>
+      <div class="ec-val" id="ec_tip">—</div>
+    </div>
+    <div class="ec-field">
+      <div class="ec-key">Bakım</div>
+      <div class="ec-val" id="ec_bakim">—</div>
+    </div>
+    <div class="ec-field">
+      <div class="ec-key">Yön Doğruluğu</div>
+      <div class="ec-val" id="ec_yon">—</div>
+    </div>
+    <div class="ec-field">
+      <div class="ec-key">Görünürlük</div>
+      <div class="ec-val" id="ec_gorunurluk">—</div>
+    </div>
+    <div class="ec-field">
+      <div class="ec-key">Okunabilirlik</div>
+      <div class="stars-display" id="ec_oku">—</div>
+    </div>
+  </div>
+  <div class="ec-full">
+    <div class="ec-key">Fotoğraflar</div>
+    <div class="ec-val" id="ec_foto" style="font-family:'Space Mono',monospace; font-size:11px;">—</div>
+  </div>
+  <div class="ec-full" id="ec_not_wrap" style="display:none;">
+    <div class="ec-key">Notlar</div>
+    <div class="ec-val" id="ec_not" style="font-size:13px; line-height:1.5; color:#bbb;">—</div>
+  </div>
+  <div class="ec-footer">
+    <div class="ec-badge" id="ec_badge">—</div>
+    <div class="ec-footer-text">CBS · Kampüs Tabela Analizi</div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">✓ Kaydedildi ve indirildi</div>
+
+<script>
+  let savedTabelalar = [];
+  let currentOku = 0;
+  let tabelaIndex = 1;
+
+  function updateCounter() {
+    const val = document.getElementById('f_no').value;
+    document.getElementById('counterDisplay').innerHTML = (val || 'T??') + '<span>aktif form</span>';
+  }
+
+  function selectChip(el, groupId, colorClass) {
+    document.querySelectorAll('#' + groupId + ' .chip').forEach(c => {
+      c.className = 'chip';
+    });
+    el.className = 'chip selected-' + colorClass;
+    updateSorunBadge();
+  }
+
+  function getSelectedChip(groupId) {
+    const sel = document.querySelector('#' + groupId + ' .chip.selected-green, #' + groupId + ' .chip.selected-red, #' + groupId + ' .chip.selected-blue, #' + groupId + ' .chip.selected-yellow');
+    return sel ? sel.textContent.trim() : '—';
+  }
+
+  function selectStar(n) {
+    currentOku = n;
+    document.querySelectorAll('#g_oku .star-btn').forEach((b, i) => {
+      b.className = 'star-btn' + (i < n ? ' active' : '');
+    });
+    updateSorunBadge();
+  }
+
+  function updateSorunBadge() {
+    const bakim = getSelectedChip('g_bakim');
+    const yon = getSelectedChip('g_yon');
+    const gor = getSelectedChip('g_gorunurluk');
+    const badge = document.getElementById('sorunBadge');
+
+    const sorunlu = bakim === 'Hasarlı / kırık' || bakim === 'Düşmüş / yok' || yon === 'Hayır, yanlış' || gor === 'Görmek çok zor' || (currentOku > 0 && currentOku <= 2);
+    const iyi = bakim === 'İyi' && yon === 'Evet, doğru' && (gor === 'Kolayca görünüyor') && currentOku >= 4;
+
+    if (sorunlu) {
+      badge.style.display = 'inline-flex';
+      badge.className = 'sorun-badge sorunlu';
+      badge.innerHTML = '⚠ Bu tabela sorunlu olarak işaretlendi';
+    } else if (iyi) {
+      badge.style.display = 'inline-flex';
+      badge.className = 'sorun-badge iyi';
+      badge.innerHTML = '✓ Bu tabela iyi durumda';
+    } else if (bakim !== '—' || yon !== '—') {
+      badge.style.display = 'inline-flex';
+      badge.className = 'sorun-badge belirsiz';
+      badge.innerHTML = '◌ Değerlendirme tamamlanınca durum belirlenir';
+    } else {
+      badge.style.display = 'none';
+    }
+  }
+
+  function getSorunDurumu() {
+    const bakim = getSelectedChip('g_bakim');
+    const yon = getSelectedChip('g_yon');
+    const gor = getSelectedChip('g_gorunurluk');
+    const sorunlu = bakim === 'Hasarlı / kırık' || bakim === 'Düşmüş / yok' || yon === 'Hayır, yanlış' || gor === 'Görmek çok zor' || (currentOku > 0 && currentOku <= 2);
+    const iyi = bakim === 'İyi' && yon === 'Evet, doğru' && gor === 'Kolayca görünüyor' && currentOku >= 4;
+    return sorunlu ? 'sorunlu' : iyi ? 'iyi' : 'belirsiz';
+  }
+
+  function getGPS() {
+    if (!navigator.geolocation) { alert('Tarayıcın konum özelliğini desteklemiyor.'); return; }
+    navigator.geolocation.getCurrentPosition(pos => {
+      const lat = pos.coords.latitude.toFixed(6);
+      const lng = pos.coords.longitude.toFixed(6);
+      document.getElementById('f_gps').value = lat + ', ' + lng;
+      showToast('📍 Konum alındı!');
+    }, () => {
+      alert('Konum alınamadı. Lütfen tarayıcı izinlerini kontrol et veya manuel gir.');
+    });
+  }
+
+  function saveTabela() {
+    const no = document.getElementById('f_no').value.trim() || ('T' + String(tabelaIndex).padStart(2,'0'));
+    const data = {
+      no,
+      konum: document.getElementById('f_konum').value.trim() || '—',
+      gps: document.getElementById('f_gps').value.trim() || '—',
+      dil: getSelectedChip('g_dil'),
+      tip: getSelectedChip('g_tip'),
+      okunabilirlik: currentOku,
+      bakim: getSelectedChip('g_bakim'),
+      yon: getSelectedChip('g_yon'),
+      gorunurluk: getSelectedChip('g_gorunurluk'),
+      foto: document.getElementById('f_foto').value.trim() || '—',
+      not: document.getElementById('f_not').value.trim(),
+      durum: getSorunDurumu(),
+      tarih: new Date().toLocaleString('tr-TR')
+    };
+
+    fillExportCard(data);
+
+    setTimeout(() => {
+      html2canvas(document.getElementById('exportCard'), {
+        backgroundColor: '#1a1a1a',
+        scale: 2,
+        useCORS: true,
+        logging: false
+      }).then(canvas => {
+        const link = document.createElement('a');
+        link.download = no + '_tabela_formu.png';
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+        savedTabelalar.push(data);
+        tabelaIndex++;
+        renderSavedList();
+        showToast('✓ ' + no + ' kaydedildi ve indirildi');
+      });
+    }, 100);
+  }
+
+  function fillExportCard(d) {
+    document.getElementById('ec_no').textContent = d.no;
+    document.getElementById('ec_tarih').textContent = d.tarih;
+    document.getElementById('ec_konum').textContent = d.konum;
+    document.getElementById('ec_gps').textContent = d.gps;
+    document.getElementById('ec_dil').textContent = d.dil;
+    document.getElementById('ec_tip').textContent = d.tip;
+    document.getElementById('ec_bakim').textContent = d.bakim;
+    document.getElementById('ec_yon').textContent = d.yon;
+    document.getElementById('ec_gorunurluk').textContent = d.gorunurluk;
+    document.getElementById('ec_foto').textContent = d.foto;
+
+    const stars = d.okunabilirlik > 0 ? '★'.repeat(d.okunabilirlik) + '☆'.repeat(5 - d.okunabilirlik) : '—';
+    document.getElementById('ec_oku').textContent = stars;
+
+    const notWrap = document.getElementById('ec_not_wrap');
+    if (d.not) {
+      notWrap.style.display = 'block';
+      document.getElementById('ec_not').textContent = d.not;
+    } else {
+      notWrap.style.display = 'none';
+    }
+
+    const badge = document.getElementById('ec_badge');
+    if (d.durum === 'iyi') { badge.className = 'ec-badge iyi'; badge.textContent = '✓ İyi durumda'; }
+    else if (d.durum === 'sorunlu') { badge.className = 'ec-badge sorunlu'; badge.textContent = '⚠ Sorunlu'; }
+    else { badge.className = 'ec-badge belirsiz'; badge.textContent = '◌ Değerlendirme eksik'; }
+  }
+
+  function newTabela() {
+    const nextNo = 'T' + String(tabelaIndex).padStart(2, '0');
+    document.getElementById('f_no').value = nextNo;
+    document.getElementById('f_konum').value = '';
+    document.getElementById('f_gps').value = '';
+    document.getElementById('f_foto').value = '';
+    document.getElementById('f_not').value = '';
+    currentOku = 0;
+
+    document.querySelectorAll('.chip').forEach(c => c.className = 'chip');
+    document.querySelectorAll('.star-btn').forEach(b => b.className = 'star-btn');
+    document.getElementById('sorunBadge').style.display = 'none';
+    updateCounter();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function renderSavedList() {
+    const list = document.getElementById('savedList');
+    document.getElementById('savedCount').textContent = savedTabelalar.length + ' tabela';
+
+    if (savedTabelalar.length === 0) {
+      list.innerHTML = '<div class="empty-state"><div class="icon">📋</div>Henüz kayıt yok.<br>Formu doldurup "Kaydet + İndir" butonuna bas.</div>';
+      return;
+    }
+
+    list.innerHTML = savedTabelalar.slice().reverse().map(d => {
+      const statusClass = d.durum === 'iyi' ? 'status-iyi' : d.durum === 'sorunlu' ? 'status-sorunlu' : 'status-belirsiz';
+      const statusText = d.durum === 'iyi' ? '✓ İyi' : d.durum === 'sorunlu' ? '⚠ Sorunlu' : '◌ Belirsiz';
+      const stars = d.okunabilirlik > 0 ? '★'.repeat(d.okunabilirlik) : '—';
+      return `
+        <div class="saved-item">
+          <div class="saved-item-left">
+            <div class="saved-no">${d.no} · ${d.tarih}</div>
+            <div class="saved-loc">${d.konum}</div>
+            <div class="saved-meta">${d.dil !== '—' ? d.dil : ''} ${d.okunabilirlik > 0 ? '· ' + stars : ''} ${d.bakim !== '—' ? '· ' + d.bakim : ''}</div>
+          </div>
+          <div class="saved-status ${statusClass}">${statusText}</div>
+          <button class="btn-download-item" onclick='reDownload(${JSON.stringify(d)})'>↓ PNG</button>
+        </div>`;
+    }).join('');
+  }
+
+  function reDownload(data) {
+    fillExportCard(data);
+    setTimeout(() => {
+      html2canvas(document.getElementById('exportCard'), {
+        backgroundColor: '#1a1a1a',
+        scale: 2,
+        useCORS: true,
+        logging: false
+      }).then(canvas => {
+        const link = document.createElement('a');
+        link.download = data.no + '_tabela_formu.png';
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+      });
+    }, 100);
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2500);
+  }
+
+  // İlk yükleme
+  document.getElementById('f_no').value = 'T01';
+  renderSavedList();
+</script>
+</body>
+</html>
