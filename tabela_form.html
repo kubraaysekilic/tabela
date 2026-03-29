@@ -515,7 +515,7 @@
     <div class="field-hint">Google Maps'te uzun bas → kopyala</div>
     <input type="text" id="f_gps" placeholder="Örn: 37.8742, 32.4934">
     <div style="margin-top: 8px;">
-      <button class="chip" onclick="getGPS()" style="font-size:12px;">📍 Konumumu Al</button>
+      <button class="chip" onclick="getGPS()" style="font-size:12px;">Konumumu Al</button>
     </div>
   </div>
 
@@ -588,13 +588,8 @@
   </div>
 
   <hr>
-  <div class="section-label">Fotoğraf & Notlar</div>
+  <div class="section-label">Notlar</div>
 
-  <div class="field-group">
-    <div class="field-label"><span class="dot"></span>Fotoğraf Dosya Adları</div>
-    <div class="field-hint">Çektiğin fotoğrafların adını yaz</div>
-    <input type="text" id="f_foto" placeholder="Örn: T01_uzak.jpg, T01_yakin.jpg">
-  </div>
 
   <div class="field-group">
     <div class="field-label"><span class="dot"></span>Ek Notlar</div>
@@ -604,13 +599,12 @@
   <div id="sorunBadge" style="margin-bottom:20px; display:none;"></div>
 
   <div class="btn-row">
-    <button class="btn btn-save" onclick="saveTabela()">💾 Kaydet + İndir</button>
+    <button class="btn btn-save" onclick="saveTabela()">Kaydet + İndir</button>
     <button class="btn btn-new" onclick="newTabela()">＋ Yeni Tabela</button>
   </div>
 
 </div>
 
-<!-- KAYITLI TABELALAR -->
 <div class="saved-section">
   <div class="saved-header">
     <div class="saved-title">Kaydedilen Tabelalar</div>
@@ -618,13 +612,12 @@
   </div>
   <div id="savedList">
     <div class="empty-state">
-      <div class="icon">📋</div>
+      <div class="icon"></div>
       Henüz kayıt yok.<br>Formu doldurup "Kaydet + İndir" butonuna bas.
     </div>
   </div>
 </div>
 
-<!-- EXPORT CARD (ekran görüntüsü için gizli) -->
 <div class="export-card" id="exportCard">
   <div class="ec-header">
     <div>
@@ -727,7 +720,7 @@
     if (sorunlu) {
       badge.style.display = 'inline-flex';
       badge.className = 'sorun-badge sorunlu';
-      badge.innerHTML = '⚠ Bu tabela sorunlu olarak işaretlendi';
+      badge.innerHTML = ' Bu tabela sorunlu olarak işaretlendi';
     } else if (iyi) {
       badge.style.display = 'inline-flex';
       badge.className = 'sorun-badge iyi';
@@ -756,7 +749,7 @@
       const lat = pos.coords.latitude.toFixed(6);
       const lng = pos.coords.longitude.toFixed(6);
       document.getElementById('f_gps').value = lat + ', ' + lng;
-      showToast('📍 Konum alındı!');
+      showToast('Konum alındı!');
     }, () => {
       alert('Konum alınamadı. Lütfen tarayıcı izinlerini kontrol et veya manuel gir.');
     });
@@ -851,7 +844,7 @@
     document.getElementById('savedCount').textContent = savedTabelalar.length + ' tabela';
 
     if (savedTabelalar.length === 0) {
-      list.innerHTML = '<div class="empty-state"><div class="icon">📋</div>Henüz kayıt yok.<br>Formu doldurup "Kaydet + İndir" butonuna bas.</div>';
+      list.innerHTML = '<div class="empty-state"><div class="icon"></div>Henüz kayıt yok.<br>Formu doldurup "Kaydet + İndir" butonuna bas.</div>';
       return;
     }
 
@@ -896,7 +889,6 @@
     setTimeout(() => t.classList.remove('show'), 2500);
   }
 
-  // İlk yükleme
   document.getElementById('f_no').value = 'T01';
   renderSavedList();
 </script>
